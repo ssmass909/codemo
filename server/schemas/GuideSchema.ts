@@ -1,16 +1,16 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-import { GuideStep } from "../types.js";
+import { GuideStepType } from "../types.js";
 
 export interface IGuide extends Document {
   owner: Types.ObjectId;
   title: string;
   description: string;
-  steps: GuideStep[];
+  steps: GuideStepType[];
   language: string;
   concepts: string[];
 }
 
-const StepSchema = new Schema<GuideStep>(
+const StepSchema = new Schema<GuideStepType>(
   {
     code: { type: String, required: true },
     annotations: [{ type: String }],

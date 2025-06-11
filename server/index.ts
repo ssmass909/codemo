@@ -1,13 +1,16 @@
 import express from "express";
+import GuidesRouter from "./routes/GuidesRouter.js";
+import "dotenv/config";
+import connectDB from "./utils/db.js";
+
 const app = express();
+app.use(express.json());
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.json({ message: "Hello, World!" });
-});
+connectDB();
+
+app.use("/guides", GuidesRouter);
 
 app.listen(port, () => {
   console.log(`express app is running on port ${port}`);
 });
-
-console.log("this change was made to test git precommit hook");
