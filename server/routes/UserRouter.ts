@@ -18,7 +18,7 @@ UserRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<Expres
   }
 });
 
-UserRouter.post("/", async (req: Request<any, any, Omit<UserType, "id">>, res: Response<ExpressResponse<IUser>>) => {
+UserRouter.post("/", async (req: Request<any, any, Omit<IUser, "id">>, res: Response<ExpressResponse<IUser>>) => {
   const user = req.body;
   console.log(user);
 
