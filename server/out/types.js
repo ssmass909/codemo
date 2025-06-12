@@ -1,3 +1,2 @@
-"use strict";
-// One step can have multiple annotations.
-// This is because the presenter might want to emphesize different points for each step
+// This types might be more useful on the client-side. but for now, i will leave it here.
+export {};

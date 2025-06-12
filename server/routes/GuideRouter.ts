@@ -3,9 +3,9 @@ import { GuideType } from "../types.js";
 import { Guide, IGuide } from "../schemas/GuideSchema.js";
 import { ExpressResponse } from "../utils/utilTypes.js";
 
-const GuidesRouter = Router();
+const GuideRouter = Router();
 
-GuidesRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<IGuide>>) => {
+GuideRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<IGuide>>) => {
   const { id } = req.params;
   const response = await Guide.findById(id);
 
@@ -17,17 +17,14 @@ GuidesRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<Expr
   res.json({ data: response });
 });
 
-GuidesRouter.post(
-  "/",
-  async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<IGuide>>) => {
-    const guide = req.body;
-    console.log(req.body);
-    const response = await Guide.create(guide);
-    res.json({ data: response });
-  }
-);
+GuideRouter.post("/", async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<IGuide>>) => {
+  const guide = req.body;
+  console.log(req.body);
+  const response = await Guide.create(guide);
+  res.json({ data: response });
+});
 
-GuidesRouter.put(
+GuideRouter.put(
   "/:id",
   async (req: Request<{ id: string }, any, GuideType>, res: Response<ExpressResponse<IGuide>>) => {
     const { id } = req.params;
@@ -51,7 +48,7 @@ GuidesRouter.put(
   }
 );
 
-GuidesRouter.delete(
+GuideRouter.delete(
   "/:id",
   async (req: Request<{ id: string }>, res: Response<ExpressResponse<{ acknowledged: boolean }>>) => {
     const { id } = req.params;
@@ -73,4 +70,4 @@ GuidesRouter.delete(
   }
 );
 
-export default GuidesRouter;
+export default GuideRouter;
