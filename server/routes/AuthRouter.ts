@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const AuthRouter = Router();
 
-interface AuthenticatedRequest<A = any, B = any, C = any, D = any, E extends Record<any, any> = any>
+export interface AuthenticatedRequest<A = any, B = any, C = any, D = any, E extends Record<any, any> = any>
   extends Request<A, B, C, D, E> {
   user?: JwtPayload;
 }
@@ -47,9 +47,8 @@ export const authenticateToken = (
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
 
-  if (!token) throw new Error("Access token required");
-
   try {
+    if (!token) throw new Error("Access token required");
     const decoded = verifyAuthToken(token);
     req.user = decoded;
     next();
@@ -131,63 +130,6 @@ AuthRouter.get(
       res.json({ data: user });
     } catch (e) {
       res.json({ data: null, metadata: { error: e, resourceId: req.user?.userId } });
-    }
-  }
-);
-
-AuthRouter.put(
-  "/profile",
-  authenticateToken,
-  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<IUser, "password">>>): Promise<void> => {
-    const { firstName, lastName, avatarUrl, location, website, bio } = req.body;
-
-    try {
-      const updatedUser = (await User.findByIdAndUpdate(
-        req.user!.userId,
-        {
-          firstName,
-          lastName,
-          avatarUrl,
-          location,
-          website,
-          bio,
-        },
-        { new: true, runValidators: true }
-      ).select("-password")) as Omit<IUser, "password">;
-
-      if (!updatedUser) throw new Error("User not found");
-
-      res.json({ data: updatedUser });
-    } catch (e) {
-      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
-    }
-  }
-);
-
-AuthRouter.put(
-  "/change-password",
-  authenticateToken,
-  async (
-    req: AuthenticatedRequest<any, any, { currentPassword: string; newPassword: string }>,
-    res: Response<ExpressResponse<any>>
-  ): Promise<void> => {
-    const { currentPassword, newPassword } = req.body;
-
-    try {
-      const user = await User.findById(req.user!.userId);
-      if (!user) throw new Error("User not found");
-      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
-      if (!isValidPassword) throw new Error("Current password is incorrect");
-
-      const saltRounds = 12;
-      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
-      user.password = hashedNewPassword;
-      await user.save();
-
-      res.clearCookie("refreshToken");
-      res.json({ data: true, message: "Password changed successfully. Please log in again." });
-    } catch (e) {
-      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
     }
   }
 );

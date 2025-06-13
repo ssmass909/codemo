@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
-import { UserType } from "../types.js";
 import { User, IUser } from "../schemas/UserSchema.js";
 import { ExpressResponse } from "../utils/utilTypes.js";
+import { AuthenticatedRequest, authenticateToken } from "./AuthRouter.js";
+import bcrypt from "bcrypt";
 
 const UserRouter = Router();
 
@@ -20,9 +21,11 @@ UserRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<Expres
 
 UserRouter.post("/", async (req: Request<any, any, Omit<IUser, "id">>, res: Response<ExpressResponse<IUser>>) => {
   const user = req.body;
-  console.log(user);
 
   try {
+    const exists = await User.findOne({ email: user.email });
+    if (exists) throw new Error("User with that email already exists!");
+
     const response = await User.create(user);
     res.json({ data: response });
   } catch (e) {
@@ -30,25 +33,75 @@ UserRouter.post("/", async (req: Request<any, any, Omit<IUser, "id">>, res: Resp
   }
 });
 
-UserRouter.put("/:id", async (req: Request<{ id: string }, any, UserType>, res: Response<ExpressResponse<IUser>>) => {
-  const { id } = req.params;
+UserRouter.put(
+  "/profile",
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<IUser, "password">>>): Promise<void> => {
+    const { firstName, lastName, avatarUrl, location, website, bio } = req.body;
 
-  try {
-    if (!id) throw new Error("Include user id in the request parameters!");
-    const response = await User.findOneAndUpdate({ _id: id }, req.body, { new: true, runValidators: true });
-    res.json({ data: response });
-  } catch (e) {
-    res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: id } });
+    try {
+      const updatedUser = (await User.findByIdAndUpdate(
+        req.user!.userId,
+        {
+          firstName,
+          lastName,
+          avatarUrl,
+          location,
+          website,
+          bio,
+        },
+        { new: true, runValidators: true }
+      ).select("-password")) as Omit<IUser, "password">;
+
+      if (!updatedUser) throw new Error("User not found");
+
+      res.json({ data: updatedUser });
+    } catch (e) {
+      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
+    }
   }
-});
+);
+
+UserRouter.put(
+  "/change-password",
+  authenticateToken,
+  async (
+    req: AuthenticatedRequest<any, any, { currentPassword: string; newPassword: string }>,
+    res: Response<ExpressResponse<any>>
+  ): Promise<void> => {
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+      const user = await User.findById(req.user!.userId);
+      if (!user) throw new Error("User not found");
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) throw new Error("Current password is incorrect");
+
+      const saltRounds = 12;
+      const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+      user.password = hashedNewPassword;
+      await user.save();
+
+      res.clearCookie("refreshToken");
+      res.json({ data: true, message: "Password changed successfully. Please log in again." });
+    } catch (e) {
+      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
+    }
+  }
+);
 
 UserRouter.delete(
   "/:id",
-  async (req: Request<{ id: string }>, res: Response<ExpressResponse<{ acknowledged: boolean }>>) => {
+  authenticateToken,
+  async (req: AuthenticatedRequest<{ id: string }>, res: Response<ExpressResponse<{ acknowledged: boolean }>>) => {
     const { id } = req.params;
 
     try {
+      const user = await User.findById(req.user!.userId);
+      if (!user) throw new Error("User not found");
       if (!id) throw new Error("Include the id of the resource which you want to delete");
+      if (user.id !== id) throw new Error("Who are you trying to delete?");
+
       const response = await User.deleteOne({ _id: id });
       res.json({ data: { acknowledged: response.acknowledged } });
     } catch (e) {
