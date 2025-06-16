@@ -1,11 +1,10 @@
 import { Request, Response, Router } from "express";
-import { GuideType } from "../types.js";
-import { Guide, IGuide } from "../schemas/GuideSchema.js";
+import { Guide, GuideType } from "../schemas/GuideSchema.js";
 import { ExpressResponse } from "../utils/utilTypes.js";
 
 const GuideRouter = Router();
 
-GuideRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<IGuide>>) => {
+GuideRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<GuideType>>) => {
   const { id } = req.params;
   const response = await Guide.findById(id);
 
@@ -17,16 +16,19 @@ GuideRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<Expre
   res.json({ data: response });
 });
 
-GuideRouter.post("/", async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<IGuide>>) => {
-  const guide = req.body;
-  console.log(req.body);
-  const response = await Guide.create(guide);
-  res.json({ data: response });
-});
+GuideRouter.post(
+  "/",
+  async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<GuideType>>) => {
+    const guide = req.body;
+    console.log(req.body);
+    const response = await Guide.create(guide);
+    res.json({ data: response });
+  }
+);
 
 GuideRouter.put(
   "/:id",
-  async (req: Request<{ id: string }, any, GuideType>, res: Response<ExpressResponse<IGuide>>) => {
+  async (req: Request<{ id: string }, any, GuideType>, res: Response<ExpressResponse<GuideType>>) => {
     const { id } = req.params;
     if (!id) {
       res.json({ data: null, message: "Include the id of the resource which you want to modify" });

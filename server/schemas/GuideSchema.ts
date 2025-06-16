@@ -1,7 +1,17 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
-import { GuideStepType } from "../types.js";
 
-export interface IGuide extends Document {
+export interface AnnotationType {
+  orderNumber: number;
+  text: string;
+}
+
+// I am using MongoDB, so GuideStep documents will be nested inside Guide Document, no uuid needed.
+export interface GuideStepType {
+  code: string;
+  annotations: string[];
+}
+
+export interface GuideType {
   owner: Types.ObjectId;
   title: string;
   description: string;
@@ -9,6 +19,8 @@ export interface IGuide extends Document {
   language: string;
   concepts: string[];
 }
+
+export type IGuide = GuideType & Document;
 
 const StepSchema = new Schema<GuideStepType>(
   {

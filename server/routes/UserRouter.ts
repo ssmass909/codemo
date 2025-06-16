@@ -1,25 +1,29 @@
 import { Request, Response, Router } from "express";
-import { User, IUser } from "../schemas/UserSchema.js";
+import { User, IUser, UserType } from "../schemas/UserSchema.js";
 import { ExpressResponse } from "../utils/utilTypes.js";
 import { AuthenticatedRequest, authenticateToken } from "./AuthRouter.js";
 import bcrypt from "bcrypt";
 
 const UserRouter = Router();
 
-UserRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<IUser>>) => {
-  const { id } = req.params;
+UserRouter.get(
+  "/:id",
+  async (req: Request<{ id: string }>, res: Response<ExpressResponse<Omit<UserType, "password">>>) => {
+    const { id } = req.params;
 
-  try {
-    if (!id) throw new Error("Provide user's id in request parameters!");
-    const response = await User.findById(id);
-    if (!response) throw new Error("User with that id couldn't be found!");
-    res.json({ data: response });
-  } catch (e) {
-    res.json({ data: null, metadata: { error: e, resourceId: id } });
+    try {
+      if (!id) throw new Error("Provide user's id in request parameters!");
+      const response = await User.findById(id);
+      if (!response) throw new Error("User with that id couldn't be found!");
+      const { password, ...publicResponse } = response;
+      res.json({ data: publicResponse });
+    } catch (e) {
+      res.json({ data: null, metadata: { error: e, resourceId: id } });
+    }
   }
-});
+);
 
-UserRouter.post("/", async (req: Request<any, any, Omit<IUser, "id">>, res: Response<ExpressResponse<IUser>>) => {
+UserRouter.post("/", async (req: Request<any, any, Omit<UserType, "id">>, res: Response<ExpressResponse<UserType>>) => {
   const user = req.body;
 
   try {
@@ -36,7 +40,7 @@ UserRouter.post("/", async (req: Request<any, any, Omit<IUser, "id">>, res: Resp
 UserRouter.put(
   "/profile",
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<IUser, "password">>>): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<UserType, "password">>>): Promise<void> => {
     const { firstName, lastName, avatarUrl, location, website, bio } = req.body;
 
     try {
