@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { ExpressResponse } from "../utils/utilTypes.js";
-import { IUser, User } from "../schemas/UserSchema.js";
+import { IUser, User, UserType } from "../schemas/UserSchema.js";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
@@ -8,7 +8,7 @@ const AuthRouter = Router();
 
 export interface AuthenticatedRequest<A = any, B = any, C = any, D = any, E extends Record<any, any> = any>
   extends Request<A, B, C, D, E> {
-  user?: JwtPayload;
+  user?: UserType;
 }
 
 // utility functions
@@ -27,10 +27,10 @@ const createRefreshToken = (payload: any) => {
   return refreshToken;
 };
 
-const verifyAuthToken = (token: string): JwtPayload => {
+const verifyAuthToken = (token: string) => {
   const { JWT_SECRET } = process.env;
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
-  return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  return jwt.verify(token, JWT_SECRET) as JwtPayload & { payload: UserType };
 };
 
 const verifyRefreshToken = (token: string): JwtPayload => {
@@ -50,7 +50,7 @@ export const authenticateToken = (
   try {
     if (!token) throw new Error("Access token required");
     const decoded = verifyAuthToken(token);
-    req.user = decoded;
+    req.user = decoded.payload;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -90,7 +90,8 @@ AuthRouter.post(
         })
         .json({ data: { authToken } });
     } catch (e) {
-      res.status(401).json({ data: null, metadata: { error: e, requestBody: req.body } });
+      const message = e instanceof Error ? e.message : "error";
+      res.status(401).json({ data: null, message: message, metadata: { error: e, requestBody: req.body } });
     }
   }
 );
@@ -122,14 +123,14 @@ AuthRouter.post("/logout", (req: Request, res: Response<ExpressResponse<{ messag
 AuthRouter.get(
   "/me",
   authenticateToken,
-  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<IUser, "password">>>): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<UserType, "password">>>): Promise<void> => {
     try {
-      const user = (await User.findById(req.user!.userId).select("-password")) as Omit<IUser, "password">;
+      const user = (await User.findById(req.user!._id).select("-password")) as Omit<IUser, "password">;
       if (!user) throw new Error("User not found");
-
       res.json({ data: user });
     } catch (e) {
-      res.json({ data: null, metadata: { error: e, resourceId: req.user?.userId } });
+      const message = e instanceof Error ? e.message : "error";
+      res.json({ data: null, message, metadata: { error: e, resourceId: req.user?._id } });
     }
   }
 );

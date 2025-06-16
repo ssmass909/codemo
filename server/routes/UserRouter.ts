@@ -23,19 +23,27 @@ UserRouter.get(
   }
 );
 
-UserRouter.post("/", async (req: Request<any, any, Omit<UserType, "id">>, res: Response<ExpressResponse<UserType>>) => {
-  const user = req.body;
+UserRouter.post(
+  "/",
+  async (req: Request<any, any, Omit<UserType, "id">>, res: Response<ExpressResponse<Omit<UserType, "password">>>) => {
+    const user = req.body;
 
-  try {
-    const exists = await User.findOne({ email: user.email });
-    if (exists) throw new Error("User with that email already exists!");
+    try {
+      const exists = await User.findOne({ email: user.email });
+      if (exists) throw new Error("User with that email already exists!");
 
-    const response = await User.create(user);
-    res.json({ data: response });
-  } catch (e) {
-    res.json({ data: null, metadata: { error: e, requestBody: req.body } });
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(user.password, saltRounds);
+
+      const response = await User.create({ ...user, password: hashedPassword });
+      const { password, ...responseObj } = response.toObject();
+
+      res.json({ data: responseObj });
+    } catch (e) {
+      res.json({ data: null, metadata: { error: e, requestBody: req.body } });
+    }
   }
-});
+);
 
 UserRouter.put(
   "/profile",
@@ -45,7 +53,7 @@ UserRouter.put(
 
     try {
       const updatedUser = (await User.findByIdAndUpdate(
-        req.user!.userId,
+        req.user?._id,
         {
           firstName,
           lastName,
@@ -61,7 +69,7 @@ UserRouter.put(
 
       res.json({ data: updatedUser });
     } catch (e) {
-      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
+      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?._id } });
     }
   }
 );
@@ -76,7 +84,7 @@ UserRouter.put(
     const { currentPassword, newPassword } = req.body;
 
     try {
-      const user = await User.findById(req.user!.userId);
+      const user = await User.findById(req.user?._id);
       if (!user) throw new Error("User not found");
       const isValidPassword = await bcrypt.compare(currentPassword, user.password);
       if (!isValidPassword) throw new Error("Current password is incorrect");
@@ -89,7 +97,7 @@ UserRouter.put(
       res.clearCookie("refreshToken");
       res.json({ data: true, message: "Password changed successfully. Please log in again." });
     } catch (e) {
-      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?.userId } });
+      res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: req.user?._id } });
     }
   }
 );
@@ -101,7 +109,7 @@ UserRouter.delete(
     const { id } = req.params;
 
     try {
-      const user = await User.findById(req.user!.userId);
+      const user = await User.findById(req.user!._id);
       if (!user) throw new Error("User not found");
       if (!id) throw new Error("Include the id of the resource which you want to delete");
       if (user.id !== id) throw new Error("Who are you trying to delete?");
