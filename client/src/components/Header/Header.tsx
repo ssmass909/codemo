@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import styles from "./Header.module.css";
 
 interface HeaderProps {}
@@ -5,7 +6,9 @@ interface HeaderProps {}
 const Header = ({}: HeaderProps) => {
   return (
     <div className={styles.main}>
-      <div className={styles.headerContent}>hi</div>
+      <Link to={"/"} className={styles.title}>
+        Codemo
+      </Link>
     </div>
   );
 };
