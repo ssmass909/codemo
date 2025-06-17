@@ -15,8 +15,8 @@
   font-variation-settings: "ROND" 0;
   font-weight: 900;
   font-size: 40px;
-  text-decoration: none;
 
+  text-decoration: none;
   background: linear-gradient(90deg, var(--primary-500) 0%, var(--accent-500) 47%, var(--primary-500) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -27,10 +27,47 @@
 
 .left {
   display: flex;
-  gap: 50px;
+  align-items: center;
+  gap: 70px;
+  height: 100%;
+}
+
+.themeBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  background: none;
+}
+
+.themeIcon {
 }
 
 .authBtns {
   padding: 0;
   margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.authBtn {
+  color: var(--text-900);
+  padding: 10px 20px;
+  font-family: "Inter", sans-serif;
+  border-radius: 15px;
+  font-size: 18px;
+  background-color: var(--secondary-300);
+}
+
+.loginBtn {
+  border: 1px solid var(--accent-400) !important;
+}
+
+.registerBtn {
+  border: 0.1px solid var(--accent-400) !important;
 }
