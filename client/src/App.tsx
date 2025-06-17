@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import { LandingPageRouteObject } from "./pages/LandingPage/LandingPage";
 import { GuideDetailsPageRouteObject } from "./pages/GuideDetailsPage/GuideDetailsPage";
 import { GuideListPageRouteObject } from "./pages/GuidesListPage/GuideListPage";
-import GlobalLayout from "./global/GlobalLayout/GlobalLayout";
+import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
 
 const App = () => {
