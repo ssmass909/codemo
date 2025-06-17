@@ -1,11 +1,12 @@
 .main {
-  height: 80px;
+  box-sizing: border-box;
   width: 100%;
+  height: 80px;
   border-bottom: 0.5px solid rgb(211, 211, 211);
   display: flex;
   align-items: center;
   padding: 0px 50px;
-  background-color: var(--background-50);
+  background-color: var(--background-300);
 }
 
 .title {
@@ -16,7 +17,7 @@
   font-size: 40px;
   text-decoration: none;
 
-  background: linear-gradient(90deg, rgba(93, 75, 180, 1) 0%, rgba(181, 74, 99, 1) 50%, rgba(93, 75, 180, 1) 100%);
+  background: linear-gradient(90deg, var(--primary-500) 0%, var(--accent-500) 47%, var(--primary-500) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
