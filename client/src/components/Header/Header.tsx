@@ -14,9 +14,13 @@ const Header = ({}: HeaderProps) => {
       <Link to={"/"} className={styles.title}>
         Codemo
       </Link>
-      <Button onClick={() => {}}>Login</Button>
-      <Button onClick={() => {}}>Register</Button>
-      <Button onClick={() => switchMode()} iconSrc={isDarkMode ? lightModeIcon : darkModeIcon} />
+      <div className={styles.left}>
+        <Button onClick={() => switchMode()} iconSrc={isDarkMode ? lightModeIcon : darkModeIcon} />
+        <div className={styles.authBtns}>
+          <Button onClick={() => {}}>Register</Button>
+          <Button onClick={() => {}}>Login</Button>
+        </div>
+      </div>
     </div>
   );
 };

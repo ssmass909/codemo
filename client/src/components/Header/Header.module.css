@@ -2,11 +2,11 @@
   box-sizing: border-box;
   width: 100%;
   height: 80px;
-  border-bottom: 0.5px solid rgb(211, 211, 211);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0px 50px;
-  background-color: var(--background-300);
+  background-color: var(--background-200);
 }
 
 .title {
@@ -23,4 +23,14 @@
   -webkit-text-fill-color: transparent;
 
   text-shadow: 0.5px 0.5px 0.1px color-mix(in srgb, var(--background-950) 10%, transparent);
+}
+
+.left {
+  display: flex;
+  gap: 50px;
+}
+
+.authBtns {
+  padding: 0;
+  margin: 0;
 }

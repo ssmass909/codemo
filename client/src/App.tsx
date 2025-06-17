@@ -4,6 +4,7 @@ import { GuideDetailsPageRouteObject } from "./pages/GuideDetailsPage/GuideDetai
 import { GuideListPageRouteObject } from "./pages/GuidesListPage/GuideListPage";
 import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
+import "./global/globals.css";
 
 const App = () => {
   const router = createBrowserRouter([
