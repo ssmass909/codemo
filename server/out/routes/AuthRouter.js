@@ -42,11 +42,11 @@ const verifyRefreshToken = (token) => {
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
-    if (!token)
-        throw new Error("Access token required");
     try {
+        if (!token)
+            throw new Error("Access token required");
         const decoded = verifyAuthToken(token);
-        req.user = decoded;
+        req.user = decoded.payload;
         next();
     }
     catch (error) {
@@ -85,7 +85,8 @@ AuthRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, functi
             .json({ data: { authToken } });
     }
     catch (e) {
-        res.status(401).json({ data: null, metadata: { error: e, requestBody: req.body } });
+        const message = e instanceof Error ? e.message : "error";
+        res.status(401).json({ data: null, message: message, metadata: { error: e, requestBody: req.body } });
     }
 }));
 AuthRouter.post("/refresh", (req, res) => {
@@ -114,54 +115,14 @@ AuthRouter.post("/logout", (req, res) => {
 AuthRouter.get("/me", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const user = (yield User.findById(req.user.userId).select("-password"));
+        const user = (yield User.findById(req.user._id).select("-password"));
         if (!user)
             throw new Error("User not found");
         res.json({ data: user });
     }
     catch (e) {
-        res.json({ data: null, metadata: { error: e, resourceId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId } });
-    }
-}));
-AuthRouter.put("/profile", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const { firstName, lastName, avatarUrl, location, website, bio } = req.body;
-    try {
-        const updatedUser = (yield User.findByIdAndUpdate(req.user.userId, {
-            firstName,
-            lastName,
-            avatarUrl,
-            location,
-            website,
-            bio,
-        }, { new: true, runValidators: true }).select("-password"));
-        if (!updatedUser)
-            throw new Error("User not found");
-        res.json({ data: updatedUser });
-    }
-    catch (e) {
-        res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId } });
-    }
-}));
-AuthRouter.put("/change-password", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const { currentPassword, newPassword } = req.body;
-    try {
-        const user = yield User.findById(req.user.userId);
-        if (!user)
-            throw new Error("User not found");
-        const isValidPassword = yield bcrypt.compare(currentPassword, user.password);
-        if (!isValidPassword)
-            throw new Error("Current password is incorrect");
-        const saltRounds = 12;
-        const hashedNewPassword = yield bcrypt.hash(newPassword, saltRounds);
-        user.password = hashedNewPassword;
-        yield user.save();
-        res.clearCookie("refreshToken");
-        res.json({ data: true, message: "Password changed successfully. Please log in again." });
-    }
-    catch (e) {
-        res.json({ data: null, metadata: { error: e, requestBody: req.body, resourceId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId } });
+        const message = e instanceof Error ? e.message : "error";
+        res.json({ data: null, message, metadata: { error: e, resourceId: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id } });
     }
 }));
 export default AuthRouter;
