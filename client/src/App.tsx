@@ -7,6 +7,8 @@ import "./global/colors.css";
 import "./global/globals.css";
 
 const App = () => {
+  console.log("hi");
+
   const router = createBrowserRouter([
     {
       Component: GlobalLayout,

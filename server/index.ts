@@ -24,3 +24,5 @@ app.use("/auth", AuthRouter);
 app.listen(port, () => {
   console.log(`express app is running on port ${port}`);
 });
+
+console.log("hi");
