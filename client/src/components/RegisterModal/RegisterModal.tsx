@@ -41,7 +41,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
   const watchPassword = watch("password");
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/register`, { data });
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/users/`, data);
     console.log(response.data);
     reset();
   };

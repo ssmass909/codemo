@@ -31,7 +31,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   });
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, { data });
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, data);
     console.log(response.data);
     reset();
   };
