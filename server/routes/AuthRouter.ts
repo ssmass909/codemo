@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { ExpressResponse } from "../utils/utilTypes.js";
+import { DefaultMetadata, ExpressResponse } from "../utils/utilTypes.js";
 import { IUser, User, UserType } from "../schemas/UserSchema.js";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -17,6 +17,7 @@ const createAuthToken = (payload: any) => {
   const { JWT_SECRET } = process.env;
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
   const authToken = jwt.sign({ payload }, JWT_SECRET, { expiresIn: 1000 * 60 * 15 });
+
   return authToken;
 };
 
@@ -30,7 +31,7 @@ const createRefreshToken = (payload: any) => {
 const verifyAuthToken = (token: string) => {
   const { JWT_SECRET } = process.env;
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
-  return jwt.verify(token, JWT_SECRET) as JwtPayload & { payload: UserType };
+  return jwt.verify(token, JWT_SECRET) as JwtPayload;
 };
 
 const verifyRefreshToken = (token: string): JwtPayload => {
@@ -41,7 +42,7 @@ const verifyRefreshToken = (token: string): JwtPayload => {
 
 export const authenticateToken = (
   req: AuthenticatedRequest,
-  res: Response<ExpressResponse<any>>,
+  res: Response<ExpressResponse<any, DefaultMetadata>>,
   next: NextFunction
 ): void => {
   const authHeader = req.headers["authorization"];
@@ -50,7 +51,9 @@ export const authenticateToken = (
   try {
     if (!token) throw new Error("Access token required");
     const decoded = verifyAuthToken(token);
-    req.user = decoded.payload;
+    console.log(decoded, "DECODED");
+    req.user = decoded.payload.payload;
+
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -65,6 +68,7 @@ export const authenticateToken = (
 
 AuthRouter.post(
   "/login",
+
   async (req: Request<any, any, { email: string; password: string }>, res: Response<ExpressResponse<any>>) => {
     try {
       const { email, password } = req.body;
@@ -103,9 +107,9 @@ AuthRouter.post("/refresh", (req: Request, res: Response<ExpressResponse<{ authT
     if (!refreshToken) throw new Error("Refresh token required");
     const decoded = verifyRefreshToken(refreshToken);
     const payload: JwtPayload = { ...decoded };
-    const newAccessToken = createAuthToken(payload);
+    const authToken = createAuthToken(payload);
 
-    res.json({ data: { authToken: newAccessToken } });
+    res.json({ data: { authToken } });
   } catch (e) {
     res.json({ data: null, metadata: { error: e } });
   }
@@ -125,7 +129,7 @@ AuthRouter.get(
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<UserType, "password">>>): Promise<void> => {
     try {
-      const user = (await User.findById(req.user!._id).select("-password")) as Omit<IUser, "password">;
+      const user = (await User.findById(req.user?._id).select("-password")) as Omit<IUser, "password">;
       if (!user) throw new Error("User not found");
       res.json({ data: user });
     } catch (e) {

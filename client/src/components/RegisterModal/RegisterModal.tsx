@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Modal from "../Modal/Modal";
 import styles from "./RegisterModal.module.css";
-import axios from "axios";
 import { observer } from "mobx-react";
 import type HeaderStore from "../../stores/HeaderStore";
+import { useAuthStore } from "../../providers/AuthStoreProvider";
 
 interface RegisterFormData {
   firstName: string;
@@ -21,6 +21,7 @@ interface RegisterModalProps {
 const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const authStore = useAuthStore();
 
   const {
     register,
@@ -41,8 +42,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
   const watchPassword = watch("password");
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/users/`, data);
-    console.log(response.data);
+    const response = await authStore.api.post(`/users/`, data);
     reset();
   };
 

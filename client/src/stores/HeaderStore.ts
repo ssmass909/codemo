@@ -14,7 +14,6 @@ class HeaderStore {
   }
 
   setRegisterModalOpen = (newValue: boolean) => {
-    console.log("invoked!");
     this.registerModalOpen = newValue;
   };
 

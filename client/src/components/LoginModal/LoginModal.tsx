@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Modal from "../Modal/Modal";
 import styles from "./LoginModal.module.css";
-import axios from "axios";
 import { observer } from "mobx-react";
 import type HeaderStore from "../../stores/HeaderStore";
+import { useAuthStore } from "../../providers/AuthStoreProvider";
 
 interface LoginFormData {
   email: string;
@@ -17,6 +17,7 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const authStore = useAuthStore();
 
   const {
     register,
@@ -31,8 +32,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   });
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, data);
-    console.log(response.data);
+    const response = await authStore.api.post(`/auth/login`, data);
     reset();
   };
 

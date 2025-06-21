@@ -6,6 +6,7 @@ import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
 import "./global/globals.css";
 import { useEffect } from "react";
+import { AuthStoreProvider } from "./providers/AuthStoreProvider";
 
 const App = () => {
   useEffect(() => {
@@ -21,6 +22,10 @@ const App = () => {
       children: [LandingPageRouteObject, GuideDetailsPageRouteObject, GuideListPageRouteObject],
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+    <AuthStoreProvider>
+      <RouterProvider router={router} />
+    </AuthStoreProvider>
+  );
 };
 export default App;
