@@ -4,13 +4,15 @@ import darkModeIcon from "../../assets/darkMode.svg";
 import lightModeIcon from "../../assets/lightMode.svg";
 import useThemeModeSwitcher from "../../hooks/useThemeModeSwitcher";
 import LoginModal from "../LoginModal/LoginModal";
-import { useState } from "react";
+import HeaderStore from "../../stores/HeaderStore";
+import RegisterModal from "../RegisterModal/RegisterModal";
+import { observer } from "mobx-react";
 
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
   const [isDarkMode, switchMode] = useThemeModeSwitcher();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const headerStore = new HeaderStore();
 
   return (
     <>
@@ -25,22 +27,25 @@ const Header = ({}: HeaderProps) => {
           <div className={styles.authBtns}>
             <button
               className={`${styles.loginBtn} button ${styles.authBtn} gradientTxt ${styles.loginBtn}`}
-              onClick={() => setLoginModalOpen(true)}
+              onClick={() => headerStore.setLoginModalOpen(true)}
             >
               Login
             </button>
             <button
               className={`${styles.registerBtn} button ${styles.authBtn} gradientTxt ${styles.registerBtn} `}
-              onClick={() => {}}
+              onClick={() => {
+                headerStore.setRegisterModalOpen(true);
+              }}
             >
               Register
             </button>
           </div>
         </div>
       </div>
-      <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} />
+      <LoginModal headerStore={headerStore} />
+      <RegisterModal headerStore={headerStore} />
     </>
   );
 };
 
-export default Header;
+export default observer(Header);

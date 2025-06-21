@@ -3,6 +3,8 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import Modal from "../Modal/Modal";
 import styles from "./LoginModal.module.css";
 import axios from "axios";
+import { observer } from "mobx-react";
+import type HeaderStore from "../../stores/HeaderStore";
 
 interface LoginFormData {
   email: string;
@@ -10,11 +12,10 @@ interface LoginFormData {
 }
 
 interface LoginModalProps {
-  open: boolean;
-  setOpen: (newValue: boolean) => void;
+  headerStore: HeaderStore;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
@@ -46,7 +47,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
   };
 
   return (
-    <Modal open={open} setOpen={setOpen}>
+    <Modal open={headerStore.loginModalOpen} setOpen={headerStore.setLoginModalOpen}>
       <div className={styles.main}>
         <div className={styles.header}>
           <h1 className={styles.title}>Welcome Back</h1>
@@ -154,4 +155,4 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
   );
 };
 
-export default LoginModal;
+export default observer(LoginModal);

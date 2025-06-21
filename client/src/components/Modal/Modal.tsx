@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./Modal.module.css";
 import closeIcon from "../../assets/close.svg";
+import { observer } from "mobx-react";
 
 interface ModalProps {
   open: boolean;
@@ -39,4 +40,4 @@ const Modal = ({ open, setOpen, children }: ModalProps) => {
   );
 };
 
-export default Modal;
+export default observer(Modal);
