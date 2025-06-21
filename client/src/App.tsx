@@ -5,9 +5,15 @@ import { GuideListPageRouteObject } from "./pages/GuidesListPage/GuideListPage";
 import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
 import "./global/globals.css";
+import { useEffect } from "react";
 
 const App = () => {
-  console.log("hi");
+  useEffect(() => {
+    document.body.classList.add("font-loading");
+    document.fonts.ready.then(() => {
+      document.body.classList.remove("font-loading");
+    });
+  }, []);
 
   const router = createBrowserRouter([
     {
