@@ -1,12 +1,16 @@
-import { type RouteObject } from "react-router";
+import { useNavigate, type RouteObject } from "react-router";
 import styles from "./LandingPage.module.css";
 import { useEffect, useState } from "react";
 import phrases from "../../assets/splashTexts.json";
 import { useRootStore } from "../../providers/RootStoreProvider";
+import { useAuthStore } from "../../providers/AuthStoreProvider";
+import type { UserType } from "../../global/types";
 
 const LandingPage = () => {
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
   const rootStore = useRootStore();
+  const authStore = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -20,6 +24,18 @@ const LandingPage = () => {
     }, 4000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const redirectIfLoggedIn = async () => {
+      if (!authStore.authToken) return;
+      const response = await authStore.api.get("/auth/me");
+      if (!response.data.data) return;
+      const user = response.data.data as UserType;
+      authStore.user = user;
+      navigate(`/user/${user._id}`);
+    };
+    redirectIfLoggedIn();
   }, []);
 
   return (

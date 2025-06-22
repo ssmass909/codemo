@@ -6,6 +6,8 @@ import { observer } from "mobx-react";
 import type HeaderStore from "../../stores/HeaderStore";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
 import { useRootStore } from "../../providers/RootStoreProvider";
+import { useNavigate } from "react-router";
+import type { UserType } from "../../global/types";
 
 interface LoginFormData {
   email: string;
@@ -20,6 +22,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const authStore = useAuthStore();
   const rootStore = useRootStore();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -36,6 +39,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     const response = await authStore.api.post(`/auth/login`, data);
     reset();
+    const user = await authStore.api
+      .get("/auth/me")
+      .then((res) => res.data.data as UserType)
+      .catch((e) => console.error(e));
+    if (!user) return;
+    console.log(user);
+    authStore.setUser(user);
+    rootStore.headerStore?.setLoginModalOpen(false);
+    navigate(`/user/${user._id}`);
   };
 
   const togglePasswordVisibility = (): void => {

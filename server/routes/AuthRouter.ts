@@ -51,8 +51,7 @@ export const authenticateToken = (
   try {
     if (!token) throw new Error("Access token required");
     const decoded = verifyAuthToken(token);
-    console.log(decoded, "DECODED");
-    req.user = decoded.payload.payload;
+    req.user = decoded.payload;
 
     next();
   } catch (error) {
@@ -128,6 +127,7 @@ AuthRouter.get(
   "/me",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<UserType, "password">>>): Promise<void> => {
+    console.log(req.user);
     try {
       const user = (await User.findById(req.user?._id).select("-password")) as Omit<IUser, "password">;
       if (!user) throw new Error("User not found");

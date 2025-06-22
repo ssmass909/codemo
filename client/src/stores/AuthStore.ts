@@ -1,8 +1,10 @@
 import axios, { type AxiosInstance } from "axios";
 import { makeObservable, action, observable } from "mobx";
+import type { UserType } from "../global/types";
 
 class AuthStore {
   authToken: string | null = null;
+  user: UserType | null = null;
   api: AxiosInstance;
   constructor() {
     this.api = axios.create({
@@ -52,12 +54,18 @@ class AuthStore {
 
     makeObservable(this, {
       authToken: observable,
+      user: observable,
       setAuthToken: action,
+      setUser: action,
     });
   }
 
   setAuthToken(newValue: string | null) {
     this.authToken = newValue;
+  }
+
+  setUser(newValue: UserType | null) {
+    this.user = newValue;
   }
 }
 
