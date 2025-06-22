@@ -7,12 +7,22 @@ import LoginModal from "../LoginModal/LoginModal";
 import HeaderStore from "../../stores/HeaderStore";
 import RegisterModal from "../RegisterModal/RegisterModal";
 import { observer } from "mobx-react";
+import { useRootStore } from "../../providers/RootStoreProvider";
+import { useEffect } from "react";
+import { useAuthStore } from "../../providers/AuthStoreProvider";
 
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
   const [isDarkMode, switchMode] = useThemeModeSwitcher();
   const headerStore = new HeaderStore();
+  const authStore = useAuthStore();
+  const rootStore = useRootStore();
+
+  useEffect(() => {
+    rootStore.headerStore = headerStore;
+    rootStore.authStore = authStore;
+  }, []);
 
   return (
     <>

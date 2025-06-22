@@ -5,6 +5,7 @@ import styles from "./LoginModal.module.css";
 import { observer } from "mobx-react";
 import type HeaderStore from "../../stores/HeaderStore";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
+import { useRootStore } from "../../providers/RootStoreProvider";
 
 interface LoginFormData {
   email: string;
@@ -18,6 +19,7 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const authStore = useAuthStore();
+  const rootStore = useRootStore();
 
   const {
     register,
@@ -145,7 +147,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
         <div className={styles.footer}>
           <p className={styles.footerText}>
             Don't have an account?{" "}
-            <button className={styles.footerLink} onClick={() => console.log("Navigate to signup")}>
+            <button
+              className={styles.footerLink}
+              onClick={() => {
+                rootStore.headerStore?.setLoginModalOpen(false);
+                rootStore.headerStore?.setRegisterModalOpen(true);
+              }}
+            >
               Sign up
             </button>
           </p>

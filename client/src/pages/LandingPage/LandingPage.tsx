@@ -2,9 +2,11 @@ import { type RouteObject } from "react-router";
 import styles from "./LandingPage.module.css";
 import { useEffect, useState } from "react";
 import phrases from "../../assets/splashTexts.json";
+import { useRootStore } from "../../providers/RootStoreProvider";
 
 const LandingPage = () => {
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
+  const rootStore = useRootStore();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,9 +27,14 @@ const LandingPage = () => {
       <section className={styles.hero}>
         <h1 className={styles.title}>Explain your code. Visually. Clearly.</h1>
         <p className={`${styles.phrase} ${styles.slideIn}`}>{currentPhrase}</p>
-        <a href="#start" className={styles.cta}>
+        <button
+          className={styles.cta}
+          onClick={() => {
+            rootStore.headerStore?.setLoginModalOpen(true);
+          }}
+        >
           Start Creating →
-        </a>
+        </button>
       </section>
 
       <section id="features" className={styles.features}>
@@ -52,12 +59,6 @@ const LandingPage = () => {
           <li>Add guided steps with explanations</li>
           <li>Preview, edit, and share</li>
         </ol>
-      </section>
-
-      <section id="start" className={styles.getStarted}>
-        <h2>Get Started</h2>
-        <p>No account needed. Start explaining right away.</p>
-        <button className={styles.startButton}>Create Your First Guide</button>
       </section>
 
       <footer className={styles.footer}>

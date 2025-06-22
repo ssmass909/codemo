@@ -7,6 +7,7 @@ import "./global/colors.css";
 import "./global/globals.css";
 import { useEffect } from "react";
 import { AuthStoreProvider } from "./providers/AuthStoreProvider";
+import { RootStoreProvider } from "./providers/RootStoreProvider";
 
 const App = () => {
   useEffect(() => {
@@ -23,9 +24,11 @@ const App = () => {
     },
   ]);
   return (
-    <AuthStoreProvider>
-      <RouterProvider router={router} />
-    </AuthStoreProvider>
+    <RootStoreProvider>
+      <AuthStoreProvider>
+        <RouterProvider router={router} />
+      </AuthStoreProvider>
+    </RootStoreProvider>
   );
 };
 export default App;

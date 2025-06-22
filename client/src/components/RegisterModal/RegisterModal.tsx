@@ -5,6 +5,7 @@ import styles from "./RegisterModal.module.css";
 import { observer } from "mobx-react";
 import type HeaderStore from "../../stores/HeaderStore";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
+import { useRootStore } from "../../providers/RootStoreProvider";
 
 interface RegisterFormData {
   firstName: string;
@@ -22,6 +23,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const authStore = useAuthStore();
+  const rootStore = useRootStore();
 
   const {
     register,
@@ -252,7 +254,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
         <div className={styles.footer}>
           <p className={styles.footerText}>
             Already have an account?{" "}
-            <button className={styles.footerLink} onClick={() => console.log("Navigate to login")}>
+            <button
+              className={styles.footerLink}
+              onClick={() => {
+                rootStore.headerStore?.setRegisterModalOpen(false);
+                rootStore.headerStore?.setLoginModalOpen(true);
+              }}
+            >
               Sign in
             </button>
           </p>

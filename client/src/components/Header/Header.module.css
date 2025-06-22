@@ -41,6 +41,7 @@
   height: 35px;
   padding: 0;
   background: none;
+  user-select: none;
 }
 
 .themeIcon {

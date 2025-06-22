@@ -17,6 +17,7 @@
   cursor: pointer;
   box-sizing: border-box;
   background-color: transparent;
+  user-select: none;
 }
 
 .button:hover {
