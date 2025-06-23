@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { AuthStoreProvider } from "./providers/AuthStoreProvider";
 import { RootStoreProvider } from "./providers/RootStoreProvider";
 import { userPageRouteObject } from "./pages/UserPage/UserPage";
+import { DashboardPageRouteObject } from "./pages/DashboardPage/DashboardPage";
 
 const App = () => {
   useEffect(() => {
@@ -21,7 +22,13 @@ const App = () => {
   const router = createBrowserRouter([
     {
       Component: GlobalLayout,
-      children: [LandingPageRouteObject, GuideDetailsPageRouteObject, GuideListPageRouteObject, userPageRouteObject],
+      children: [
+        LandingPageRouteObject,
+        DashboardPageRouteObject,
+        GuideDetailsPageRouteObject,
+        GuideListPageRouteObject,
+        userPageRouteObject,
+      ],
     },
   ]);
   return (

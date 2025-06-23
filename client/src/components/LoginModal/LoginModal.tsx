@@ -37,17 +37,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   });
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
-    const response = await authStore.api.post(`/auth/login`, data);
+    await authStore.api.post(`/auth/login`, data);
     reset();
     const user = await authStore.api
       .get("/auth/me")
       .then((res) => res.data.data as UserType)
       .catch((e) => console.error(e));
     if (!user) return;
-    console.log(user);
     authStore.setUser(user);
     rootStore.headerStore?.setLoginModalOpen(false);
-    navigate(`/user/${user._id}`);
+    navigate(`/dashboard`);
   };
 
   const togglePasswordVisibility = (): void => {

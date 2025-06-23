@@ -1,11 +1,12 @@
-import axios, { type AxiosInstance } from "axios";
-import { makeObservable, action, observable } from "mobx";
+import axios, { AxiosError, type AxiosInstance } from "axios";
+import { makeObservable, action, observable, computed } from "mobx";
 import type { UserType } from "../global/types";
 
 class AuthStore {
   authToken: string | null = null;
   user: UserType | null = null;
   api: AxiosInstance;
+
   constructor() {
     this.api = axios.create({
       baseURL: import.meta.env.VITE_SERVER_URL,
@@ -19,22 +20,25 @@ class AuthStore {
         return response;
       },
       async (error) => {
-        if (error.response && error.response.status === 401) {
-          try {
-            const refreshResponse = await this.api.post("/auth/refresh");
-            const newToken = refreshResponse.data.data?.authToken;
-            if (newToken) {
-              this.setAuthToken(newToken);
-              error.config.headers["authorization"] = `Bearer ${newToken}`;
-              console.log(error.config);
-              return this.api(error.config);
-            } else {
-              this.setAuthToken(null);
-            }
-          } catch (refreshError) {
+        if (!(error instanceof AxiosError) || !error.config || !error.response || error.response.status !== 401) {
+          return Promise.reject(error);
+        }
+
+        try {
+          const refreshResponse = await this.api.post("/auth/refresh");
+          const newToken = refreshResponse.data.data?.authToken;
+
+          if (newToken) {
+            this.setAuthToken(newToken);
+            error.config.headers["authorization"] = `Bearer ${newToken}`;
+            return this.api(error.config);
+          } else {
             this.setAuthToken(null);
-            // Optionally, redirect to login or show a message
           }
+        } catch (refreshError) {
+          this.setAuthToken(null);
+
+          // Optionally, redirect to login or show a message
         }
         return Promise.reject(error);
       }
@@ -57,6 +61,7 @@ class AuthStore {
       user: observable,
       setAuthToken: action,
       setUser: action,
+      loggedIn: computed,
     });
   }
 
@@ -66,6 +71,10 @@ class AuthStore {
 
   setUser(newValue: UserType | null) {
     this.user = newValue;
+  }
+
+  get loggedIn() {
+    return this.user !== null;
   }
 }
 

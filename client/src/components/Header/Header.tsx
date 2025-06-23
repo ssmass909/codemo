@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useRootStore } from "../../providers/RootStoreProvider";
 import { useEffect } from "react";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
+import ProfileDropdown from "../ProfileMenu/ProfileDropdown";
 
 interface HeaderProps {}
 
@@ -34,22 +35,26 @@ const Header = ({}: HeaderProps) => {
           <button className={`${styles.themeBtn} button`} onClick={() => switchMode()}>
             <img className={styles.themeIcon} src={isDarkMode ? lightModeIcon : darkModeIcon} />
           </button>
-          <div className={styles.authBtns}>
-            <button
-              className={`${styles.loginBtn} button ${styles.authBtn} gradientTxt ${styles.loginBtn}`}
-              onClick={() => headerStore.setLoginModalOpen(true)}
-            >
-              Login
-            </button>
-            <button
-              className={`${styles.registerBtn} button ${styles.authBtn} gradientTxt ${styles.registerBtn} `}
-              onClick={() => {
-                headerStore.setRegisterModalOpen(true);
-              }}
-            >
-              Register
-            </button>
-          </div>
+          {authStore.loggedIn ? (
+            <ProfileDropdown />
+          ) : (
+            <div className={styles.authBtns}>
+              <button
+                className={`${styles.loginBtn} button ${styles.authBtn} gradientTxt ${styles.loginBtn}`}
+                onClick={() => headerStore.setLoginModalOpen(true)}
+              >
+                Login
+              </button>
+              <button
+                className={`${styles.registerBtn} button ${styles.authBtn} gradientTxt ${styles.registerBtn} `}
+                onClick={() => {
+                  headerStore.setRegisterModalOpen(true);
+                }}
+              >
+                Register
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <LoginModal headerStore={headerStore} />

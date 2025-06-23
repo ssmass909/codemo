@@ -13,18 +13,18 @@ export interface AuthenticatedRequest<A = any, B = any, C = any, D = any, E exte
 
 // utility functions
 
-const createAuthToken = (payload: any) => {
+const createAuthToken = (payload: Object) => {
   const { JWT_SECRET } = process.env;
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
-  const authToken = jwt.sign({ payload }, JWT_SECRET, { expiresIn: 1000 * 60 * 15 });
+  const authToken = jwt.sign(payload, JWT_SECRET, { expiresIn: 1000 * 60 * 15 });
 
   return authToken;
 };
 
-const createRefreshToken = (payload: any) => {
+const createRefreshToken = (payload: Object) => {
   const { JWT_REFRESH_SECRET } = process.env;
   if (!JWT_REFRESH_SECRET) throw new Error("JWT_REFRESH_SECRET is not defined!");
-  const refreshToken = jwt.sign({ payload }, JWT_REFRESH_SECRET, { expiresIn: 1000 * 60 * 60 * 24 * 30 });
+  const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET);
   return refreshToken;
 };
 
@@ -46,19 +46,23 @@ export const authenticateToken = (
   next: NextFunction
 ): void => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+  const token = authHeader && authHeader.split(" ")[1];
 
   try {
     if (!token) throw new Error("Access token required");
-    const decoded = verifyAuthToken(token);
-    req.user = decoded.payload;
+    const decoded = verifyAuthToken(token) as UserType;
+    req.user = decoded;
 
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       res.status(401).json({ data: null, metadata: { error: "Access token expired" } });
     } else {
-      res.status(401).json({ data: null, metadata: { error: "Invalid access token" } });
+      res.status(401).json({
+        data: null,
+        message: error instanceof Error ? error.message : "Unknown error",
+        metadata: { error: "Invalid access token" },
+      });
     }
   }
 };
@@ -105,12 +109,11 @@ AuthRouter.post("/refresh", (req: Request, res: Response<ExpressResponse<{ authT
   try {
     if (!refreshToken) throw new Error("Refresh token required");
     const decoded = verifyRefreshToken(refreshToken);
-    const payload: JwtPayload = { ...decoded };
+    const payload = decoded;
     const authToken = createAuthToken(payload);
-
     res.json({ data: { authToken } });
   } catch (e) {
-    res.json({ data: null, metadata: { error: e } });
+    res.json({ data: null, message: e instanceof Error ? e.message : "unknown error", metadata: { error: e } });
   }
 });
 
@@ -127,7 +130,6 @@ AuthRouter.get(
   "/me",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response<ExpressResponse<Omit<UserType, "password">>>): Promise<void> => {
-    console.log(req.user);
     try {
       const user = (await User.findById(req.user?._id).select("-password")) as Omit<IUser, "password">;
       if (!user) throw new Error("User not found");

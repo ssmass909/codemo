@@ -17,14 +17,14 @@ const createAuthToken = (payload) => {
     const { JWT_SECRET } = process.env;
     if (!JWT_SECRET)
         throw new Error("JWT_SECRET is not defined!");
-    const authToken = jwt.sign({ payload }, JWT_SECRET, { expiresIn: 1000 * 60 * 15 });
+    const authToken = jwt.sign(payload, JWT_SECRET, { expiresIn: 1000 * 60 * 15 });
     return authToken;
 };
 const createRefreshToken = (payload) => {
     const { JWT_REFRESH_SECRET } = process.env;
     if (!JWT_REFRESH_SECRET)
         throw new Error("JWT_REFRESH_SECRET is not defined!");
-    const refreshToken = jwt.sign({ payload }, JWT_REFRESH_SECRET, { expiresIn: 1000 * 60 * 60 * 24 * 30 });
+    const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET);
     return refreshToken;
 };
 const verifyAuthToken = (token) => {
@@ -41,12 +41,12 @@ const verifyRefreshToken = (token) => {
 };
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+    const token = authHeader && authHeader.split(" ")[1];
     try {
         if (!token)
             throw new Error("Access token required");
         const decoded = verifyAuthToken(token);
-        req.user = decoded.payload;
+        req.user = decoded;
         next();
     }
     catch (error) {
@@ -54,7 +54,11 @@ export const authenticateToken = (req, res, next) => {
             res.status(401).json({ data: null, metadata: { error: "Access token expired" } });
         }
         else {
-            res.status(401).json({ data: null, metadata: { error: "Invalid access token" } });
+            res.status(401).json({
+                data: null,
+                message: error instanceof Error ? error.message : "Unknown error",
+                metadata: { error: "Invalid access token" },
+            });
         }
     }
 };
@@ -95,12 +99,12 @@ AuthRouter.post("/refresh", (req, res) => {
         if (!refreshToken)
             throw new Error("Refresh token required");
         const decoded = verifyRefreshToken(refreshToken);
-        const payload = Object.assign({}, decoded);
-        const newAccessToken = createAuthToken(payload);
-        res.json({ data: { authToken: newAccessToken } });
+        const payload = decoded;
+        const authToken = createAuthToken(payload);
+        res.json({ data: { authToken } });
     }
     catch (e) {
-        res.json({ data: null, metadata: { error: e } });
+        res.json({ data: null, message: e instanceof Error ? e.message : "unknown error", metadata: { error: e } });
     }
 });
 AuthRouter.post("/logout", (req, res) => {
@@ -113,16 +117,16 @@ AuthRouter.post("/logout", (req, res) => {
     }
 });
 AuthRouter.get("/me", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
-        const user = (yield User.findById(req.user._id).select("-password"));
+        const user = (yield User.findById((_a = req.user) === null || _a === void 0 ? void 0 : _a._id).select("-password"));
         if (!user)
             throw new Error("User not found");
         res.json({ data: user });
     }
     catch (e) {
         const message = e instanceof Error ? e.message : "error";
-        res.json({ data: null, message, metadata: { error: e, resourceId: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id } });
+        res.json({ data: null, message, metadata: { error: e, resourceId: (_b = req.user) === null || _b === void 0 ? void 0 : _b._id } });
     }
 }));
 export default AuthRouter;
