@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosInstance } from "axios";
-import { makeObservable, action, observable, computed } from "mobx";
+import { makeObservable, action, observable, computed, flowResult } from "mobx";
 import type { UserType } from "../global/types";
 
 class AuthStore {
@@ -37,8 +37,6 @@ class AuthStore {
           }
         } catch (refreshError) {
           this.setAuthToken(null);
-
-          // Optionally, redirect to login or show a message
         }
         return Promise.reject(error);
       }
@@ -71,6 +69,26 @@ class AuthStore {
 
   setUser(newValue: UserType | null) {
     this.user = newValue;
+  }
+
+  *fetchUser(): Generator<Promise<UserType | null>, Promise<UserType | null>, UserType | null> {
+    const result = yield this.api
+      .get("/auth/me")
+      .then((res) => {
+        const user = res.data.data as UserType;
+        this.setUser(user);
+        return user;
+      })
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
+    return Promise.resolve(result);
+  }
+
+  async fetchUserFlow(): Promise<UserType | null> {
+    const result = flowResult<UserType | null>(await this.fetchUser().next().value);
+    return result;
   }
 
   get loggedIn() {

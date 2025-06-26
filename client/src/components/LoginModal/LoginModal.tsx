@@ -39,12 +39,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ headerStore }) => {
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     await authStore.api.post(`/auth/login`, data);
     reset();
-    const user = await authStore.api
-      .get("/auth/me")
-      .then((res) => res.data.data as UserType)
-      .catch((e) => console.error(e));
+    const user = await authStore.fetchUserFlow();
     if (!user) return;
-    authStore.setUser(user);
     rootStore.headerStore?.setLoginModalOpen(false);
     navigate(`/dashboard`);
   };
