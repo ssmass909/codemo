@@ -16,6 +16,21 @@ GuideRouter.get("/:id", async (req: Request<{ id: string }>, res: Response<Expre
   res.json({ data: response });
 });
 
+GuideRouter.get("/user/:id", async (req: Request<{ id: string }>, res: Response<ExpressResponse<GuideType[]>>) => {
+  const { id } = req.params;
+  try {
+    const response = await Guide.find({ owner: id });
+    if (!response) throw new Error("Couldn't get guides!");
+    res.json({ data: response });
+  } catch (e) {
+    res.json({
+      data: null,
+      message: e instanceof Error ? e.message : undefined,
+      metadata: { error: e, resourceId: id },
+    });
+  }
+});
+
 GuideRouter.post(
   "/",
   async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<GuideType>>) => {

@@ -11,24 +11,19 @@ import { useRootStore } from "../../providers/RootStoreProvider";
 import { useEffect } from "react";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
 import ProfileDropdown from "../ProfileMenu/ProfileDropdown";
+import { useHeaderStore } from "../../providers/HeaderStoreProvider";
 
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
   const [isDarkMode, switchMode] = useThemeModeSwitcher();
-  const headerStore = new HeaderStore();
+  const headerStore = useHeaderStore();
   const authStore = useAuthStore();
-  const rootStore = useRootStore();
-
-  useEffect(() => {
-    rootStore.headerStore = headerStore;
-    rootStore.authStore = authStore;
-  }, []);
 
   return (
     <>
       <div className={styles.main}>
-        <Link to={"/"} className={styles.title}>
+        <Link to={authStore.loggedIn ? `/dashboard` : "/"} className={styles.title}>
           Codemo
         </Link>
         <div className={styles.left}>

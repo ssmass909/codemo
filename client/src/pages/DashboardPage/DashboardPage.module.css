@@ -1,0 +1,5 @@
+.main {
+  background: var(--background-100);
+  min-height: calc(100vh - 80px);
+  color: var(--text-900);
+}

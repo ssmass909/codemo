@@ -10,8 +10,9 @@ import { AuthStoreProvider } from "./providers/AuthStoreProvider";
 import { RootStoreProvider } from "./providers/RootStoreProvider";
 import { userPageRouteObject } from "./pages/UserPage/UserPage";
 import { DashboardPageRouteObject } from "./pages/DashboardPage/DashboardPage";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+
 import { observer } from "mobx-react";
+import { HeaderStoreProvider } from "./providers/HeaderStoreProvider";
 
 const App = () => {
   useEffect(() => {
@@ -36,7 +37,9 @@ const App = () => {
   return (
     <RootStoreProvider>
       <AuthStoreProvider>
-        <RouterProvider router={router} />
+        <HeaderStoreProvider>
+          <RouterProvider router={router} />
+        </HeaderStoreProvider>
       </AuthStoreProvider>
     </RootStoreProvider>
   );

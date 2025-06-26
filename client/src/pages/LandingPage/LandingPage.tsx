@@ -1,10 +1,9 @@
-import { useNavigate, type RouteObject } from "react-router";
+import { Navigate, useNavigate, type RouteObject } from "react-router";
 import styles from "./LandingPage.module.css";
 import { useEffect, useState } from "react";
 import phrases from "../../assets/splashTexts.json";
 import { useRootStore } from "../../providers/RootStoreProvider";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
-import type { UserType } from "../../global/types";
 import { observer } from "mobx-react";
 
 const LandingPage = () => {
@@ -26,6 +25,8 @@ const LandingPage = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (authStore.loggedIn) return <Navigate to={"/dashboard"} />;
 
   return (
     <main className={styles.main}>
