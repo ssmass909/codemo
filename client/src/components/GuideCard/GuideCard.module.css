@@ -1,0 +1,133 @@
+.main {
+  background: var(--background-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--background-300);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(93, 75, 180, 0.1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(93, 75, 180, 0.15);
+  border-color: var(--background-300);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.cardTitleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.language {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--secondary-100), var(--secondary-200));
+  color: var(--secondary-700);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.editButton {
+  background: var(--background-100);
+  color: var(--text-800);
+  border: 1px solid var(--background-200);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editButton:hover {
+  background: var(--background-100);
+  color: var(--text-700);
+  border-color: var(--background-300);
+}
+
+.description {
+  color: var(--text-600);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.stat {
+  font-size: 0.875rem;
+  color: var(--text-600);
+  font-weight: 500;
+}
+
+.date {
+  font-size: 0.875rem;
+  color: var(--text-500);
+  font-weight: 400;
+}
+
+/* Optional: Responsive tweaks */
+@media (max-width: 480px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .cardTitleSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .language {
+    align-self: flex-start;
+  }
+
+  .editButton {
+    align-self: flex-start;
+    width: fit-content;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

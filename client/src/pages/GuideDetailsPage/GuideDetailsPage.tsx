@@ -6,4 +6,4 @@ const GuideDetailsPage = () => {
 };
 
 export default GuideDetailsPage;
-export const GuideDetailsPageRouteObject: RouteObject = { path: "guide/:id", Component: GuideDetailsPage };
+export const GuideDetailsPageRouteObject: RouteObject = { path: "/guide/:id", Component: GuideDetailsPage };

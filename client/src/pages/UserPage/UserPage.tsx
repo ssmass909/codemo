@@ -1,6 +1,6 @@
 import { useNavigate, useParams, type RouteObject } from "react-router";
 import styles from "./UserPage.module.css";
-import UserStore from "../../stores/UserStore";
+import UserPageStore from "../../stores/UserStore";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -11,7 +11,7 @@ const UserPage = () => {
   const navigate = useNavigate();
   const authStore = useAuthStore();
   if (!id) navigate("/");
-  const userStore = new UserStore(id!, authStore);
+  const userStore = new UserPageStore(id!, authStore);
 
   useEffect(() => {
     userStore.getCurrentUserFromApiFlow().then(() => {

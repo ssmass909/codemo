@@ -2,4 +2,116 @@
   background: var(--background-100);
   min-height: calc(100vh - 80px);
   color: var(--text-900);
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-900);
+  margin: 0;
+}
+
+.createGuideLink {
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--accent-300), var(--accent-600));
+  color: var(--primary-200);
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(93, 75, 180, 0.2);
+}
+
+.createButton:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  box-shadow: 0 4px 12px rgba(93, 75, 180, 0.3);
+}
+
+.createButton:active {
+  transform: translateY(0);
+}
+
+.guidesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .createButton {
+    align-self: center;
+    width: fit-content;
+  }
+
+  .guidesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .cardTitleSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .language {
+    align-self: flex-start;
+  }
+
+  .editButton {
+    align-self: flex-start;
+    width: fit-content;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }

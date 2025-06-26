@@ -2,7 +2,7 @@ import { action, flow, flowResult, makeObservable, observable } from "mobx";
 import type { UserType } from "../global/types";
 import type AuthStore from "./AuthStore";
 
-class UserStore {
+class UserPageStore {
   currentUser: UserType | null = null;
   id: string;
   authStore: AuthStore;
@@ -29,6 +29,7 @@ class UserStore {
   }
 
   *getCurrentUserFromApi() {
+    if (!this.authStore.api) return;
     let loading = true;
     let error = null;
 
@@ -47,4 +48,4 @@ class UserStore {
   }
 }
 
-export default UserStore;
+export default UserPageStore;

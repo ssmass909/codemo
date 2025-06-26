@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { LandingPageRouteObject } from "./pages/LandingPage/LandingPage";
 import { GuideDetailsPageRouteObject } from "./pages/GuideDetailsPage/GuideDetailsPage";
-import { GuideListPageRouteObject } from "./pages/GuidesListPage/GuideListPage";
 import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
 import "./global/globals.css";
@@ -13,6 +12,7 @@ import { DashboardPageRouteObject } from "./pages/DashboardPage/DashboardPage";
 
 import { observer } from "mobx-react";
 import { HeaderStoreProvider } from "./providers/HeaderStoreProvider";
+import { CreateGuidePageRouteObject } from "./pages/CreateGuidePage/CreateGuidePage";
 
 const App = () => {
   useEffect(() => {
@@ -29,8 +29,8 @@ const App = () => {
         LandingPageRouteObject,
         DashboardPageRouteObject,
         GuideDetailsPageRouteObject,
-        GuideListPageRouteObject,
         userPageRouteObject,
+        CreateGuidePageRouteObject,
       ],
     },
   ]);

@@ -9,3 +9,25 @@ export interface UserType {
   website?: string;
   bio?: string;
 }
+
+export interface AnnotationType {
+  orderNumber: number;
+  text: string;
+}
+
+export interface GuideStepType {
+  code: string;
+  annotations: string[];
+}
+
+export interface GuideType {
+  _id: string;
+  owner: string;
+  title: string;
+  description: string;
+  steps: GuideStepType[];
+  language: string;
+  concepts: string[];
+  createdAt: string;
+  updatedAt: string;
+}
