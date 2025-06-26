@@ -44,6 +44,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ headerStore }) => {
   const watchPassword = watch("password");
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+    if (!authStore.api) return;
     const response = await authStore.api.post(`/users/`, data);
     reset();
   };

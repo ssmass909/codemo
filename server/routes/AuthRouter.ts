@@ -6,10 +6,15 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 const AuthRouter = Router();
 
-export interface AuthenticatedRequest<A = any, B = any, C = any, D = any, E extends Record<any, any> = any>
-  extends Request<A, B, C, D, E> {
+export type AuthenticatedRequest<A = any, B = any, C = any, D = any, E extends Record<any, any> = any> = Request<
+  A,
+  B,
+  C,
+  D,
+  E
+> & {
   user?: UserType;
-}
+};
 
 // utility functions
 

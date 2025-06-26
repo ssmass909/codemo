@@ -12,6 +12,7 @@ export interface GuideStepType {
 }
 
 export interface GuideType {
+  _id: Types.ObjectId;
   owner: Types.ObjectId;
   title: string;
   description: string;

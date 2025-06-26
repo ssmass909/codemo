@@ -1,18 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { LandingPageRouteObject } from "./pages/LandingPage/LandingPage";
-import { GuideDetailsPageRouteObject } from "./pages/GuideDetailsPage/GuideDetailsPage";
 import GlobalLayout from "./components/GlobalLayout/GlobalLayout";
 import "./global/colors.css";
 import "./global/globals.css";
 import { useEffect } from "react";
 import { AuthStoreProvider } from "./providers/AuthStoreProvider";
 import { RootStoreProvider } from "./providers/RootStoreProvider";
-import { userPageRouteObject } from "./pages/UserPage/UserPage";
-import { DashboardPageRouteObject } from "./pages/DashboardPage/DashboardPage";
-
 import { observer } from "mobx-react";
 import { HeaderStoreProvider } from "./providers/HeaderStoreProvider";
-import { CreateGuidePageRouteObject } from "./pages/CreateGuidePage/CreateGuidePage";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import CreateGuidePage from "./pages/CreateGuidePage/CreateGuidePage";
+import DashboardPage from "./pages/DashboardPage/DashboardPage";
+import GuideDetailsPage from "./pages/GuideDetailsPage/GuideDetailsPage";
+import LandingPage from "./pages/LandingPage/LandingPage";
+import UserPage from "./pages/UserPage/UserPage";
 
 const App = () => {
   useEffect(() => {
@@ -26,11 +26,25 @@ const App = () => {
     {
       Component: GlobalLayout,
       children: [
-        LandingPageRouteObject,
-        DashboardPageRouteObject,
-        GuideDetailsPageRouteObject,
-        userPageRouteObject,
-        CreateGuidePageRouteObject,
+        { Component: LandingPage, path: "/" },
+        {
+          element: (
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          ),
+          path: "/dashboard",
+        },
+        { path: "/guide/:id", Component: GuideDetailsPage },
+        { Component: UserPage, path: "/user/:id" },
+        {
+          element: (
+            <ProtectedRoute>
+              <CreateGuidePage />
+            </ProtectedRoute>
+          ),
+          path: "/create-guide",
+        },
       ],
     },
   ]);

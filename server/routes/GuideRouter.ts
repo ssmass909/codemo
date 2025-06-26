@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { Guide, GuideType } from "../schemas/GuideSchema.js";
 import { ExpressResponse } from "../utils/utilTypes.js";
+import { AuthenticatedRequest, authenticateToken } from "./AuthRouter.js";
 
 const GuideRouter = Router();
 
@@ -33,11 +34,23 @@ GuideRouter.get("/user/:id", async (req: Request<{ id: string }>, res: Response<
 
 GuideRouter.post(
   "/",
-  async (req: Request<any, any, Omit<GuideType, "id">>, res: Response<ExpressResponse<GuideType>>) => {
+  authenticateToken,
+  async (req: AuthenticatedRequest<any, any, GuideType>, res: Response<ExpressResponse<GuideType>>) => {
+    const user = req.user;
     const guide = req.body;
-    console.log(req.body);
-    const response = await Guide.create(guide);
-    res.json({ data: response });
+    try {
+      if (guide.owner.toString() !== user?._id) throw new Error("Guide owner id and user id mismatch");
+      console.log(req.body);
+      const response = await Guide.create(guide);
+      res.json({ data: response });
+    } catch (e) {
+      console.error(e);
+      res.json({
+        data: null,
+        message: e instanceof Error ? e.message : "unknown error",
+        metadata: { error: e, requestBody: req.body },
+      });
+    }
   }
 );
 

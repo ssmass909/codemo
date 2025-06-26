@@ -37,12 +37,3 @@ const DashboardPage = () => {
   );
 };
 export default DashboardPage;
-
-export const DashboardPageRouteObject: RouteObject = {
-  element: (
-    <ProtectedRoute>
-      <DashboardPage />
-    </ProtectedRoute>
-  ),
-  path: "/dashboard",
-};

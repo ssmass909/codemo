@@ -25,5 +25,3 @@ const UserPage = () => {
 };
 
 export default observer(UserPage);
-
-export const userPageRouteObject: RouteObject = { Component: UserPage, path: "/user/:id" };

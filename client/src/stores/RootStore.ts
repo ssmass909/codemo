@@ -1,4 +1,4 @@
-import { makeObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import type AuthStore from "./AuthStore";
 import type HeaderStore from "./HeaderStore";
 import type { AxiosInstance } from "axios";
@@ -14,20 +14,24 @@ class RootStore {
       baseURL: import.meta.env.VITE_SERVER_URL,
       withCredentials: true,
     });
-    makeObservable(this, {});
+    makeObservable(this);
   }
 
-  setAuthStore(newValue: AuthStore) {
-    this.authStore = newValue;
-    newValue.setApi(this.api);
+  setAuthStore(authStore: AuthStore) {
+    this.authStore = authStore;
+    authStore.setApi(this.api);
     this.api.interceptors.response.use(
       async (response) => {
         const authToken = response.data.data?.authToken;
-        if (authToken) newValue.setAuthToken(authToken);
+        if (authToken) authStore.setAuthToken(authToken);
         return response;
       },
       async (error) => {
-        if (!(error instanceof AxiosError) || !error.config || !error.response || error.response.status !== 401) {
+        if (
+          !(error instanceof AxiosError) ||
+          !error.config ||
+          (error.response && (!error.response || error.response.status !== 401))
+        ) {
           return Promise.reject(error);
         }
 
@@ -36,14 +40,14 @@ class RootStore {
           const newToken = refreshResponse.data.data?.authToken;
 
           if (newToken) {
-            newValue.setAuthToken(newToken);
+            authStore.setAuthToken(newToken);
             error.config.headers["authorization"] = `Bearer ${newToken}`;
             return this.api(error.config);
           } else {
-            newValue.setAuthToken(null);
+            authStore.setAuthToken(null);
           }
         } catch (refreshError) {
-          newValue.setAuthToken(null);
+          authStore.setAuthToken(null);
         }
         return Promise.reject(error);
       }
@@ -51,8 +55,8 @@ class RootStore {
 
     this.api.interceptors.request.use(
       (config) => {
-        if (newValue.authToken) {
-          config.headers.authorization = `Bearer ${newValue.authToken}`;
+        if (authStore.authToken) {
+          config.headers.authorization = `Bearer ${authStore.authToken}`;
         }
         return config;
       },

@@ -1,4 +1,4 @@
-import { Navigate, useNavigate, type RouteObject } from "react-router";
+import { Navigate, type RouteObject } from "react-router";
 import styles from "./LandingPage.module.css";
 import { useEffect, useState } from "react";
 import phrases from "../../assets/splashTexts.json";
@@ -10,7 +10,6 @@ const LandingPage = () => {
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
   const rootStore = useRootStore();
   const authStore = useAuthStore();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -75,4 +74,3 @@ const LandingPage = () => {
 };
 
 export default observer(LandingPage);
-export const LandingPageRouteObject: RouteObject = { Component: LandingPage, path: "/" };
