@@ -20,6 +20,24 @@ class RootStore {
   setAuthStore(authStore: AuthStore) {
     this.authStore = authStore;
     authStore.setApi(this.api);
+
+    // --- Begin refresh lock implementation ---
+    let isRefreshing = false;
+    let refreshPromise: Promise<string | null> | null = null;
+    let failedQueue: Array<{ resolve: (value?: any) => void; reject: (reason?: any) => void; config: any }> = [];
+
+    const processQueue = (error: any, token: string | null = null) => {
+      failedQueue.forEach((prom) => {
+        if (error) {
+          prom.reject(error);
+        } else {
+          if (token) prom.config.headers["authorization"] = `Bearer ${token}`;
+          prom.resolve(this.api(prom.config));
+        }
+      });
+      failedQueue = [];
+    };
+
     this.api.interceptors.response.use(
       async (response) => {
         const authToken = response.data.data?.authToken;
@@ -35,23 +53,46 @@ class RootStore {
           return Promise.reject(error);
         }
 
-        try {
-          const refreshResponse = await this.api.post("/auth/refresh");
-          const newToken = refreshResponse.data.data?.authToken;
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject, config: error.config });
+          });
+        }
 
-          if (newToken) {
-            authStore.setAuthToken(newToken);
+        isRefreshing = true;
+        refreshPromise = (async () => {
+          try {
+            const refreshResponse = await this.api.post("/auth/refresh");
+            const newToken = refreshResponse.data.data?.authToken;
+            if (newToken) {
+              authStore.setAuthToken(newToken);
+              processQueue(null, newToken);
+              return newToken;
+            } else {
+              authStore.setAuthToken(null);
+              processQueue(new Error("No new token returned"), null);
+              return null;
+            }
+          } catch (refreshError) {
+            authStore.setAuthToken(null);
+            processQueue(refreshError, null);
+            return null;
+          } finally {
+            isRefreshing = false;
+            refreshPromise = null;
+          }
+        })();
+
+        return refreshPromise.then((newToken) => {
+          if (newToken && error.config) {
             error.config.headers["authorization"] = `Bearer ${newToken}`;
             return this.api(error.config);
-          } else {
-            authStore.setAuthToken(null);
           }
-        } catch (refreshError) {
-          authStore.setAuthToken(null);
-        }
-        return Promise.reject(error);
+          return Promise.reject(error);
+        });
       }
     );
+    // --- End refresh lock implementation ---
 
     this.api.interceptors.request.use(
       (config) => {
