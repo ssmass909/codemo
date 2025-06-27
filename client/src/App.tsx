@@ -45,6 +45,14 @@ const App = () => {
           ),
           path: "/create-guide",
         },
+        {
+          element: (
+            <ProtectedRoute>
+              <GuideDetailsPage />
+            </ProtectedRoute>
+          ),
+          path: "/guide/:id",
+        },
       ],
     },
   ]);

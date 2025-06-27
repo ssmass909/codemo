@@ -13,27 +13,25 @@ class DashboardPageStore {
       setGuides: action,
       addGuide: action,
       filterGuides: action,
+      fetchGuidesFlow: action,
     });
   }
 
-  *fetchGuides(userId: string): Generator<Promise<GuideType[]>, Promise<GuideType[]>, GuideType[]> {
-    if (!this.api) return Promise.resolve([] as GuideType[]);
+  *fetchGuides(userId: string): Generator<Promise<GuideType[]>, GuideType[], GuideType[]> {
+    if (!this.api) return [] as GuideType[];
     const result = yield this.api!.get(`guides/user/${userId}`)
-      .then((res) => {
-        const guides = res.data.data as GuideType[];
-        this.setGuides(guides);
-        return guides;
-      })
+      .then((res) => res.data.data as GuideType[])
       .catch((e) => {
         console.error(e);
         return [];
       });
 
-    return Promise.resolve(result);
+    return result;
   }
 
   async fetchGuidesFlow(userId: string): Promise<GuideType[]> {
-    const result = flowResult<GuideType[]>(await this.fetchGuides(userId).next().value);
+    const result = await flowResult(this.fetchGuides(userId));
+    this.setGuides(result);
     return result;
   }
 

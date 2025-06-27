@@ -1,5 +1,5 @@
 import { type AxiosInstance } from "axios";
-import { makeObservable, action, observable, computed, flowResult } from "mobx";
+import { makeObservable, action, observable, computed, flowResult, flow } from "mobx";
 import type { UserType } from "../global/types";
 
 class AuthStore {
@@ -15,6 +15,7 @@ class AuthStore {
       setUser: action,
       loggedIn: computed,
       canFetch: computed,
+      fetchUser: flow,
     });
   }
 
@@ -26,8 +27,8 @@ class AuthStore {
     this.user = newValue;
   }
 
-  *fetchUser(): Generator<Promise<UserType | null>, Promise<UserType | null>, UserType | null> {
-    if (!this.canFetch) return Promise.reject(null);
+  *fetchUser(): Generator<Promise<UserType | null>, UserType | null, UserType | null> {
+    if (!this.canFetch) return null;
     const result = yield this.api!.get("/auth/me")
       .then((res) => {
         const user = res.data.data as UserType;
@@ -38,11 +39,11 @@ class AuthStore {
         console.error(e);
         return null;
       });
-    return Promise.resolve(result);
+    return result;
   }
 
   async fetchUserFlow(): Promise<UserType | null> {
-    const result = flowResult<UserType | null>(await this.fetchUser().next().value);
+    const result = await flowResult(this.fetchUser());
     return result;
   }
 

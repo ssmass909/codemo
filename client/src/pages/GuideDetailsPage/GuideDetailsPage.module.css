@@ -1,0 +1,500 @@
+.main {
+  min-height: 100vh;
+  background: var(--background-50);
+  padding: 2rem 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-200);
+  gap: 1rem;
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.headerRight {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-600);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.backLink:hover {
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-800);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metadataItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-600);
+  font-size: 0.875rem;
+}
+
+.description {
+  color: var(--text-700);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.actionBtn {
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.actionBtn:hover {
+  background: var(--primary-700);
+}
+
+.actionBtn.secondary {
+  background: var(--secondary-600);
+}
+
+.actionBtn.secondary:hover {
+  background: var(--secondary-700);
+}
+
+.actionBtn.danger {
+  background: var(--accent-600);
+}
+
+.actionBtn.danger:hover {
+  background: var(--accent-700);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.conceptsSection {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conceptsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.conceptTag {
+  background: var(--primary-100);
+  color: var(--primary-800);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.contentContainer {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.stepsNavigation {
+  background: var(--background-100);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--primary-200);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+.stepsNavTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stepsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.stepNavItem {
+  background: none;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  color: var(--text-700);
+  font-size: 0.875rem;
+}
+
+.stepNavItem:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-200);
+}
+
+.stepNavItem.active {
+  background: var(--primary-100);
+  border-color: var(--primary-500);
+  color: var(--primary-800);
+  font-weight: 500;
+}
+
+.stepProgress {
+  font-size: 0.75rem;
+  color: var(--text-500);
+  margin-top: 0.25rem;
+}
+
+.stepContent {
+  background: var(--background-200);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--primary-200);
+}
+
+.stepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--primary-200);
+}
+
+.stepTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin: 0;
+}
+
+.stepNavigation {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navBtn {
+  background: var(--secondary-600);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navBtn:hover {
+  background: var(--secondary-700);
+}
+
+.navBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.codeBlock {
+  background: var(--background-100);
+  border: 1px solid var(--primary-200);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow-x: auto;
+}
+
+.codeContent {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-800);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.copyBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--primary-600);
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background-color 0.2s ease;
+}
+
+.copyBtn:hover {
+  background: var(--primary-700);
+}
+
+.annotationsSection {
+  margin-top: 1.5rem;
+}
+
+.annotationsTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.annotationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.annotationItem {
+  background: var(--accent-50);
+  border: 1px solid var(--accent-200);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border-left: 4px solid var(--accent-500);
+}
+
+.annotationText {
+  color: var(--text-700);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.noAnnotations {
+  color: var(--text-500);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+.noSteps {
+  text-align: center;
+  color: var(--text-500);
+  font-style: italic;
+  padding: 2rem;
+}
+
+.error {
+  background: var(--accent-100);
+  color: var(--accent-800);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--accent-300);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: var(--text-600);
+  font-size: 1.125rem;
+}
+
+.loadingSpinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--primary-200);
+  border-top-color: var(--primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.deleteModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.deleteModalContent {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.deleteModalTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-800);
+  margin-bottom: 1rem;
+}
+
+.deleteModalText {
+  color: var(--text-700);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.deleteModalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modalBtn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.cancelModalBtn {
+  background: var(--text-300);
+  color: var(--text-800);
+}
+
+.cancelModalBtn:hover {
+  background: var(--text-400);
+}
+
+.confirmDeleteBtn {
+  background: var(--accent-600);
+  color: white;
+}
+
+.confirmDeleteBtn:hover {
+  background: var(--accent-700);
+}
+
+@media (max-width: 768px) {
+  .contentContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stepsNavigation {
+    position: static;
+    order: 2;
+  }
+
+  .stepContent {
+    order: 1;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerRight {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .main {
+    padding: 1rem;
+  }
+
+  .stepHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .stepNavigation {
+    justify-content: center;
+  }
+}

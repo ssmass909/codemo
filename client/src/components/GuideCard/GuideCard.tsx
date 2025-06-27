@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { GuideType } from "../../global/types";
 import styles from "./GuideCard.module.css";
+import { observer } from "mobx-react";
 
 interface GuideCardProps {
   guide: GuideType;

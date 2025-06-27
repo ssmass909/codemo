@@ -1,21 +1,21 @@
-import { Link, type RouteObject } from "react-router";
+import { Link } from "react-router";
 import styles from "./DashboardPage.module.css";
-import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import GuideCard from "../../components/GuideCard/GuideCard";
 import DashboardPageStore from "../../stores/DashboardPageStore";
 import { useAuthStore } from "../../providers/AuthStoreProvider";
 import { useRootStore } from "../../providers/RootStoreProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { observer } from "mobx-react";
 
 const DashboardPage = () => {
-  const store = new DashboardPageStore();
+  const [store] = useState(new DashboardPageStore());
   const authStore = useAuthStore();
   const rootStore = useRootStore();
 
   useEffect(() => {
-    store.setApi(rootStore.api);
-    if (authStore.user?._id) store.fetchGuides(authStore.user?._id);
-  }, [authStore.user?._id]);
+    if (!store.api) store.setApi(rootStore.api);
+    if (authStore.loggedIn) store.fetchGuidesFlow(authStore.user?._id!);
+  }, [authStore.user?._id, store.api]);
 
   return (
     <main className={styles.main}>
@@ -36,4 +36,4 @@ const DashboardPage = () => {
     </main>
   );
 };
-export default DashboardPage;
+export default observer(DashboardPage);
