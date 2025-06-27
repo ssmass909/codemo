@@ -8,7 +8,22 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 const app = express();
 const port = 3000;
-const corsOptions = { origin: process.env.CLIENT_URL, credentials: true };
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (process.env.CLIENT_URL) {
+            // Support wildcard at the end, e.g. https://example.com*
+            const base = process.env.CLIENT_URL.replace(/\*+$/, "");
+            if (origin && origin.startsWith(base)) {
+                return callback(null, true);
+            }
+        }
+        if (origin === "http://localhost:5173") {
+            return callback(null, true);
+        }
+        return callback(new Error("Not allowed by CORS"), false);
+    },
+    credentials: true,
+};
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_PARSER_SECRET));
