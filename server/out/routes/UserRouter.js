@@ -40,7 +40,6 @@ UserRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 UserRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.body;
-    console.log(user);
     try {
         const exists = yield User.findOne({ email: user.email });
         if (exists)
@@ -53,7 +52,6 @@ UserRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (e) {
         const metadata = { error: e instanceof Error ? e.message : e, requestBody: req.body };
-        console.log(metadata);
         res.json({ data: null, metadata });
     }
 }));

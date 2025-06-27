@@ -40,7 +40,6 @@ GuideRouter.post(
     const guide = req.body;
     try {
       if (guide.owner.toString() !== user?._id) throw new Error("Guide owner id and user id mismatch");
-      console.log(req.body);
       const response = await Guide.create(guide);
       res.json({ data: response });
     } catch (e) {

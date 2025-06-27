@@ -52,7 +52,6 @@ class GuideDetailsPageStore {
 
   setGuide(newValue: GuideType | null) {
     this.guide = newValue;
-    console.log(newValue);
     if (newValue) {
       this.currentStepIndex = 0;
     }
@@ -119,7 +118,6 @@ class GuideDetailsPageStore {
 
   async fetchGuideFlow(guideId: string): Promise<GuideType | null> {
     const result = await flowResult(this.fetchGuide(guideId));
-    console.log(result, "RESULT!");
     this.setGuide(result);
     return result;
   }

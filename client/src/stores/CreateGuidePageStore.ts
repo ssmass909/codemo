@@ -201,8 +201,6 @@ class CreateGuidePageStore {
       })),
     };
 
-    console.log(this.api, "ALMOST");
-
     const result = yield this.api!.post("/guides/", { ...guideData, owner: ownerId })
       .then((res) => {
         const guide = res.data.data as GuideType;

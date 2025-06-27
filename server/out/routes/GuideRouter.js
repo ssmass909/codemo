@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Router } from "express";
 import { Guide } from "../schemas/GuideSchema.js";
+import { authenticateToken } from "./AuthRouter.js";
 const GuideRouter = Router();
 GuideRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -19,11 +20,39 @@ GuideRouter.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     res.json({ data: response });
 }));
-GuideRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+GuideRouter.get("/user/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const response = yield Guide.find({ owner: id });
+        if (!response)
+            throw new Error("Couldn't get guides!");
+        res.json({ data: response });
+    }
+    catch (e) {
+        res.json({
+            data: null,
+            message: e instanceof Error ? e.message : undefined,
+            metadata: { error: e, resourceId: id },
+        });
+    }
+}));
+GuideRouter.post("/", authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
     const guide = req.body;
-    console.log(req.body);
-    const response = yield Guide.create(guide);
-    res.json({ data: response });
+    try {
+        if (guide.owner.toString() !== (user === null || user === void 0 ? void 0 : user._id))
+            throw new Error("Guide owner id and user id mismatch");
+        const response = yield Guide.create(guide);
+        res.json({ data: response });
+    }
+    catch (e) {
+        console.error(e);
+        res.json({
+            data: null,
+            message: e instanceof Error ? e.message : "unknown error",
+            metadata: { error: e, requestBody: req.body },
+        });
+    }
 }));
 GuideRouter.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;

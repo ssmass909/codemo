@@ -27,7 +27,6 @@ UserRouter.post(
   "/",
   async (req: Request<any, any, Omit<UserType, "id">>, res: Response<ExpressResponse<Omit<UserType, "password">>>) => {
     const user = req.body;
-    console.log(user);
 
     try {
       const exists = await User.findOne({ email: user.email });
@@ -42,7 +41,6 @@ UserRouter.post(
       res.json({ data: responseObj });
     } catch (e) {
       const metadata = { error: e instanceof Error ? e.message : e, requestBody: req.body };
-      console.log(metadata);
       res.json({ data: null, metadata });
     }
   }
